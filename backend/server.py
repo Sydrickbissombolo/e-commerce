@@ -363,6 +363,151 @@ async def admin_dashboard():
         "total_users": total_users
     }
 
+# Sample data initialization
+@api_router.post("/admin/init-sample-data")
+async def init_sample_data():
+    """Initialize sample data for testing"""
+    
+    # Sample categories
+    categories = [
+        {"name": "Electronics", "description": "Latest gadgets and tech accessories"},
+        {"name": "Fashion", "description": "Trendy clothing and accessories"},
+        {"name": "Digital Products", "description": "Software, courses, and digital services"},
+        {"name": "Services", "description": "Professional services and consultations"},
+        {"name": "Home & Garden", "description": "Home improvement and garden supplies"}
+    ]
+    
+    # Check if categories already exist
+    existing_categories = await db.categories.count_documents({})
+    if existing_categories == 0:
+        category_objects = [Category(**cat) for cat in categories]
+        await db.categories.insert_many([cat.dict() for cat in category_objects])
+    
+    # Sample products with base64 placeholder images
+    sample_products = [
+        {
+            "name": "Wireless Bluetooth Headphones",
+            "description": "High-quality wireless headphones with noise cancellation and 30-hour battery life.",
+            "price": 99.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNTBDMTI3LjYxNCA1MCAxNTAgNzIuMzg1OCAxNTAgMTAwQzE1MCAxMjcuNjE0IDEyNy42MTQgMTUwIDEwMCAxNTBDNzIuMzg1OCAxNTAgNTAgMTI3LjYxNCA1MCAxMDBDNTAgNzIuMzg1OCA3Mi4zODU4IDUwIDEwMCA1MFoiIGZpbGw9IiMzQjgyRjYiLz4KPHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDFMMTMuMDkgNi4yNkwxOSA3TDE0LjUgMTEuMjRMMTYgMTlMMTAgMTUuMjdMNCA5TDEwIDEzLjI3TDEzLjA5IDYuMjZMMTAgMVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K"],
+            "category": "Electronics",
+            "inventory": 50,
+            "type": "physical",
+            "featured": True
+        },
+        {
+            "name": "Smart Fitness Watch",
+            "description": "Track your health and fitness with this advanced smartwatch featuring heart rate monitoring, GPS, and 7-day battery life.",
+            "price": 249.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjUwIiB5PSI3MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI2MCIgcng9IjEwIiBmaWxsPSIjMTBCOTgxIi8+CjxyZWN0IHg9IjcwIiB5PSI5MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIwIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K"],
+            "category": "Electronics",
+            "inventory": 30,
+            "type": "physical",
+            "featured": True
+        },
+        {
+            "name": "Premium Cotton T-Shirt",
+            "description": "Comfortable, breathable cotton t-shirt available in multiple colors and sizes.",
+            "price": 29.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik02MCA2MEM2MCA0NC4zNzUgNzIuMzc1IDMyIDg4IDMySDExMkMxMjcuNjI1IDMyIDE0MCA0NC4zNzUgMTQwIDYwVjE2MEMxNDAgMTYwIDEwMCAxNjAgMTAwIDE2MEMxMDAgMTYwIDYwIDE2MCA2MCAxNjBWNjBaIiBmaWxsPSIjRUY0NDQ0Ii8+Cjwvc3ZnPgo="],
+            "category": "Fashion",
+            "inventory": 100,
+            "type": "physical",
+            "featured": False
+        },
+        {
+            "name": "Web Development Course",
+            "description": "Complete full-stack web development course with React, Node.js, and MongoDB. Includes lifetime access and certificate.",
+            "price": 79.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjMwIiB5PSI0MCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxMjAiIHJ4PSI4IiBmaWxsPSIjODA3OUY3Ii8+CjxyZWN0IHg9IjUwIiB5PSI2MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI4IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI1MCIgeT0iODAiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI1MCIgeT0iMTAwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjgiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo="],
+            "category": "Digital Products",
+            "inventory": 9999,
+            "type": "digital",
+            "featured": True
+        },
+        {
+            "name": "Business Consultation",
+            "description": "1-hour business strategy consultation with experienced consultant. Includes follow-up notes and action plan.",
+            "price": 150.00,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIyMCIgZmlsbD0iIzNCODJGNiIvPgo8cmVjdCB4PSI3MCIgeT0iMTEwIiB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIGZpbGw9IiMzQjgyRjYiLz4KPHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDFMMTMuMDkgNi4yNkwxOSA3TDE0LjUgMTEuMjRMMTYgMTlMMTAgMTUuMjdMNCA5TDEwIDEzLjI3TDEzLjA5IDYuMjZMMTAgMVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K"],
+            "category": "Services",
+            "inventory": 10,
+            "type": "service",
+            "featured": False
+        },
+        {
+            "name": "Smartphone Case",
+            "description": "Protective case for smartphones with shock absorption and wireless charging compatibility.",
+            "price": 24.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjcwIiB5PSI0MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjEyMCIgcng9IjEwIiBmaWxsPSIjMTExODI3Ii8+CjxyZWN0IHg9IjgwIiB5PSI2MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMzc0MTUxIi8+Cjwvc3ZnPgo="],
+            "category": "Electronics",
+            "inventory": 75,
+            "type": "physical",
+            "featured": False
+        },
+        {
+            "name": "Leather Wallet",
+            "description": "Handcrafted genuine leather wallet with RFID protection and multiple card slots.",
+            "price": 45.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjUwIiB5PSI4MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgcng9IjQiIGZpbGw9IiM5MjQwMDAiLz4KPHJlY3QgeD0iNjAiIHk9IjkwIiB3aWR0aD0iODAiIGhlaWdodD0iNCIgZmlsbD0iIzc5MjcwNCIvPgo8cmVjdCB4PSI2MCIgeT0iMTAwIiB3aWR0aD0iODAiIGhlaWdodD0iNCIgZmlsbD0iIzc5MjcwNCIvPgo8L3N2Zz4K"],
+            "category": "Fashion",
+            "inventory": 25,
+            "type": "physical",
+            "featured": False
+        },
+        {
+            "name": "Digital Marketing eBook",
+            "description": "Comprehensive guide to digital marketing strategies, SEO, and social media marketing. PDF format.",
+            "price": 19.99,
+            "images": ["data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxyZWN0IHg9IjYwIiB5PSI0MCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iIzEwOTkzRSIvPgo8cmVjdCB4PSI3MCIgeT0iNjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI3MCIgeT0iNzAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI3MCIgeT0iODAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8cmVjdCB4PSI3MCIgeT0iOTAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI0IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K"],
+            "category": "Digital Products",
+            "inventory": 9999,
+            "type": "digital",
+            "featured": False
+        }
+    ]
+    
+    # Check if products already exist
+    existing_products = await db.products.count_documents({})
+    if existing_products == 0:
+        product_objects = [Product(**prod) for prod in sample_products]
+        await db.products.insert_many([prod.dict() for prod in product_objects])
+    
+    # Sample promo codes
+    promo_codes = [
+        {
+            "code": "WELCOME10",
+            "discount_percentage": 10.0,
+            "min_order_amount": 50.0,
+            "active": True
+        },
+        {
+            "code": "SAVE20",
+            "discount_percentage": 20.0,
+            "min_order_amount": 100.0,
+            "active": True
+        },
+        {
+            "code": "NEWUSER",
+            "discount_percentage": 15.0,
+            "min_order_amount": 30.0,
+            "active": True
+        }
+    ]
+    
+    # Check if promo codes already exist
+    existing_promos = await db.promo_codes.count_documents({})
+    if existing_promos == 0:
+        promo_objects = [PromoCode(**promo) for promo in promo_codes]
+        await db.promo_codes.insert_many([promo.dict() for promo in promo_objects])
+    
+    return {
+        "message": "Sample data initialized successfully",
+        "categories": len(categories),
+        "products": len(sample_products),
+        "promo_codes": len(promo_codes)
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
